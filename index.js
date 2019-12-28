@@ -10,6 +10,7 @@ const { StaticApp } = require('@keystonejs/app-static');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const sessionStore = new MongoStore({ url: 'mongodb://localhost/domain-check' });
+const extendGraphQL = require('./lib/extendGraphQL');
 
 const { appStaticSrc, appStaticPath } = require('./config');
 const schemas = require('./schemas');
@@ -21,6 +22,8 @@ const keystone = new Keystone({
   onConnect: initializeData,
   sessionStore,
 });
+
+extendGraphQL(keystone);
 
 const authStrategy = keystone.createAuthStrategy({
   type: PasswordAuthStrategy,

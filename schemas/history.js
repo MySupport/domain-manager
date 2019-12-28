@@ -1,8 +1,4 @@
-const {
-  Text,
-  Relationship,
-  DateTime,
-} = require('@keystonejs/fields');
+const { Text, Relationship, DateTime } = require('@keystonejs/fields');
 const { Wysiwyg } = require('@keystonejs/fields-wysiwyg-tinymce');
 const { DEFAULT_LIST_ACCESS } = require('../utils/access');
 

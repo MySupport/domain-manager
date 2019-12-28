@@ -65,7 +65,7 @@
     "cryptr": "^4.0.2",
     "date-fns": "^1.30.1",
     "dotenv": "^8.0.0",
-    "eslint-plugin-emotion": "^10.0.14",
+    "eslint-plugin-emotion": "^10.0.27",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
     "facepaint": "^1.2.1",
@@ -89,14 +89,15 @@
     "styled-components": "^4.3.2",
     "terminal-link": "^1.3.0",
     "uuid": "^3.3.2",
+    "whois-json": "^2.0.4",
     "winston": "^3.2.1",
-    "yargs": "^13.3.0"
+    "yargs": "^15.0.2"
   },
   "optionalDependencies": {
     "node-windows": "^0.1.14"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.4",
+    "@babel/core": "^7.7.7",
     "@storybook/addon-actions": "^5.1.10",
     "@storybook/addon-backgrounds": "^5.1.10",
     "@storybook/addon-knobs": "^5.1.10",

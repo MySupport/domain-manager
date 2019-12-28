@@ -15,6 +15,16 @@ declare module queries {
         active: boolean;
     }
 
+    export interface Domain {
+        id: string;
+        name: string;
+        registryCreationDate: string;
+        registryExpiryDate: string;
+        registryUpdatedDate: string;
+        lastCheckedDate: string;
+        expiresIn: string;
+        lastCheckError: string;
+    }
 
 }
 

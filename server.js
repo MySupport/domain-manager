@@ -6,6 +6,7 @@ const { keystone, apps } = require('./index');
 const { port } = require('./config');
 const { logAdminRoutes } = require('./utils/index');
 const { DataService } = require('./service/dataService');
+const { WhoisService } = require('./service/whoisService');
 
 keystone
   .prepare({ apps, dev: process.env.NODE_ENV !== 'production' })
@@ -29,6 +30,7 @@ keystone
         if (error) throw error;
         logAdminRoutes(apps, port);
         console.log(`App listening on https port 3000! Go to https://localhost:${port}/`);
+        new WhoisService(keystone);
       });
   })
   .catch(error => {

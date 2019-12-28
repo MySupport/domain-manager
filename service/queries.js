@@ -19,3 +19,22 @@ exports.ALL_ACTIVE_PROCESS_QUERY = `{
     type
     active
 }`;
+
+exports.QUERY_ALL_DOMAINS = `
+query allDomains {
+  allDomains {
+    id
+    name
+    registryCreationDate
+    registryExpiryDate
+    registryUpdatedDate
+    lastCheckedDate
+    lastCheckError
+  }
+}`;
+
+exports.MUTATION_SAVE_DOMAIN_WHOIS = `mutation updateDomain($id: ID!, $data: DomainUpdateInput ){
+	updateDomain(id: $id, data: $data) {
+    id
+  }
+}`;

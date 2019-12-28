@@ -14,8 +14,8 @@ export default {
       component: About,
     },
     {
-      label: 'Process',
-      children: ['Process'],
+      label: 'Domains',
+      children: ['Domain'],
     },
     {
       label: 'Reporting',
