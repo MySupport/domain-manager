@@ -1,8 +1,6 @@
 const { Text, DateTime, Virtual } = require('@keystonejs/fields');
 const { atTracking } = require('@keystonejs/list-plugins');
 
-// const { DateTimeUtc } = require('@keystonejs/fields-datetime-utc');
-
 const distanceInWordsToNow = require('date-fns/distance_in_words_to_now');
 
 const { DEFAULT_LIST_ACCESS } = require('../utils/access');
