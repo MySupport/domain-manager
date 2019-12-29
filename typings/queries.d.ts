@@ -21,9 +21,13 @@ declare module queries {
         registryCreationDate: string;
         registryExpiryDate: string;
         registryUpdatedDate: string;
+        registrar: string;
+        registryDomainId: string;
+        registrarWhoisServer: string;
         lastCheckedDate: string;
         expiresIn: string;
         lastCheckError: string;
+        whoisData: string;
     }
 
 }
