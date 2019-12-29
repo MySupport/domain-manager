@@ -3,15 +3,16 @@ const { isDev, logFileName } = require('../config');
 const { combine, timestamp, printf } = format;
 
 const formatSyslog = printf(({ level, message, timestamp }) => {
-  return `${timestamp} ${level}: ${message}`;
+  return `${timestamp} ${level.toUpperCase()}: ${message}`;
 });
 
 const logger = createLogger({
   format: combine(
     timestamp(),
-    formatSyslog
+    formatSyslog,
+    format.colorize({ all: isDev }),
   ),
-  transports: [new transports.File({ filename: logFileName }), new transports.Console()]
+  transports: [new transports.File({ filename: logFileName }), ...(isDev ? [new transports.Console()] : [])],
 });
 
 // logger.transports.push(new transports.Console());

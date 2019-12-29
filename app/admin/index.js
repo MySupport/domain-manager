@@ -15,7 +15,7 @@ export default {
     },
     {
       label: 'Domains',
-      children: ['Domain'],
+      children: ['Domain', 'WhoisServer'],
     },
     {
       label: 'Reporting',

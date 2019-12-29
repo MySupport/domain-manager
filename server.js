@@ -5,15 +5,12 @@ const https = require('https');
 const { keystone, apps } = require('./index');
 const { port } = require('./config');
 const { logAdminRoutes } = require('./utils/index');
-const { DataService } = require('./service/dataService');
 const { WhoisService } = require('./service/whoisService');
 
 keystone
   .prepare({ apps, dev: process.env.NODE_ENV !== 'production' })
   .then(async ({ middlewares }) => {
     await keystone.connect();
-
-    DataService.SetKeystone(keystone);
 
     const app = express();
     app.use(middlewares);
