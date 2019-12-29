@@ -3,7 +3,6 @@ const whois = require('@mysupport/whois');
 const { CronJob } = require('cron');
 const parseDomain = require('parse-domain');
 
-const { asyncForEach } = require('../utils/asyncForEach');
 const { sleep } = require('../utils/sleep');
 const { logInfo, logError } = require('./loggingService');
 const { ServiceBase } = require('./serviceBase');
@@ -45,7 +44,7 @@ class WhoisService extends ServiceBase {
           d => !d.registryExpiryDate || differenceInDays(d.registryExpiryDate, Date.now()) < 30
         );
     await this.getDomainServers();
-    logInfo(`will be checking ${domainsToCheck.length} for their expiration dates`);
+    logInfo(`will be checking ${domainsToCheck.length} domains expiring in next 30 days to refresh them`);
     if (domainsToCheck.length) {
       this.queueDomains(domainsToCheck);
     }
@@ -97,7 +96,7 @@ class WhoisService extends ServiceBase {
       counter++;
       await this.saveDomainWhois(d, who, error);
       logInfo('waiting for 12 seconds for next call');
-      await sleep(12000);
+      await sleep(12000); // REF: needed to prevent whois server rate limiting, ideally it should be per whois server (ip).
       logInfo('waking after 12 seconds of sleep');
       d = this.domainsQueue.shift();
     }
