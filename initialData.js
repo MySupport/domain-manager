@@ -36,7 +36,17 @@ module.exports = async keystone => {
 };
 
 const initialData = {
-  User: [
-    { name: 'Admin User', email: 'admin@mysupport.in', isAdmin: true, password },
+  User: [{ name: 'Admin User', email: 'admin@mysupport.in', isAdmin: true, password }],
+  WhoisServer: [
+    { tld: 'in', server: 'whois.registry.in' },
+    { tld: 'co.in', server: 'whois.registry.in' },
+    { tld: 'net.in', server: 'whois.registry.in' },
+    { tld: 'org.in', server: 'whois.registry.in' },
+    { tld: 'ind.in', server: 'whois.registry.in' },
+    { tld: 'gov.in', server: 'whois.registry.in' },
+    { tld: 'firm.in', server: 'whois.registry.in' },
+    { tld: 'gen.in', server: 'whois.registry.in' },
+    { tld: 'भारत', server: 'whois.registry.in' },
+    { tld: 'भारतम्', server: 'whois.registry.in' },
   ],
 };

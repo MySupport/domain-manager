@@ -1,13 +1,18 @@
 const differenceInDays = require('date-fns/difference_in_days');
 const whois = require('@mysupport/whois');
 const { CronJob } = require('cron');
+const parseDomain = require('parse-domain');
 
 const { asyncForEach } = require('../utils/asyncForEach');
 const { sleep } = require('../utils/sleep');
 const { logInfo, logError } = require('./loggingService');
 const { ServiceBase } = require('./serviceBase');
 
-const { QUERY_ALL_DOMAINS, MUTATION_SAVE_DOMAIN_WHOIS } = require('./queries');
+const {
+  QUERY_ALL_DOMAINS,
+  MUTATION_SAVE_DOMAIN_WHOIS,
+  QUERY_ALL_WHOIS_SERVERS,
+} = require('./queries');
 
 let cronJob = null;
 
@@ -24,6 +29,7 @@ class WhoisService extends ServiceBase {
     WhoisService.instance = this;
     /** @type queries.Domain[] */
     this.domainsQueue = [];
+    this.domainServers = {};
     this.startBackgroundTask();
   }
 
@@ -38,7 +44,7 @@ class WhoisService extends ServiceBase {
       : domains.filter(
           d => !d.registryExpiryDate || differenceInDays(d.registryExpiryDate, Date.now()) < 30
         );
-
+    await this.getDomainServers();
     logInfo(`will be checking ${domainsToCheck.length} for their expiration dates`);
     if (domainsToCheck.length) {
       this.queueDomains(domainsToCheck);
@@ -62,7 +68,7 @@ class WhoisService extends ServiceBase {
 
   async getDomainsForCheck() {
     const { data: { allDomains = [] } = {}, errors } = await this.executeQuery(QUERY_ALL_DOMAINS);
-    if (errors) throw errors;
+    if (errors) logError(errors);
     return allDomains;
   }
 
@@ -86,13 +92,10 @@ class WhoisService extends ServiceBase {
     let counter = 0;
     this.isRunning = true;
     let d = this.domainsQueue.shift();
-    while(d) {
-      const who = await this.getDomainWhois(d.name);
-      if (who && Object.keys(who).length) {
-        counter++;
-        await this.saveDomainWhois(d, who);
-        logInfo(`saved domain info for: ${d.name}`);
-      }
+    while (d) {
+      const { who, error } = await this.getDomainWhois(d.name);
+      counter++;
+      await this.saveDomainWhois(d, who, error);
       logInfo('waiting for 12 seconds for next call');
       await sleep(12000);
       logInfo('waking after 12 seconds of sleep');
@@ -107,7 +110,7 @@ class WhoisService extends ServiceBase {
       /** @type Partial<queries.Domain> */
       const data = error
         ? {
-            lastCheckError: error.message,
+            lastCheckError: error,
             lastCheckedDate: new Date().toISOString(),
           }
         : {
@@ -126,9 +129,25 @@ class WhoisService extends ServiceBase {
         data,
       });
       if (errors) throw errors;
-    } catch (error) {
-      logError(error);
+      logInfo(`saved domain info for: ${domain.name}${error ? `with error ${error}` : ''}`);
+    } catch (err) {
+      logError(err);
     }
+  }
+
+  async getDomainServers() {
+    const { data: { allWhoisServers = [] } = {}, errors } = await this.executeQuery(
+      QUERY_ALL_WHOIS_SERVERS
+    );
+    if (errors) {
+      logError(errors);
+      return;
+    }
+    const servers = allWhoisServers.reduce((accumulator, current) => {
+      accumulator[current.tld] = current.server;
+      return accumulator;
+    }, {});
+    this.domainServers = servers || {};
   }
 
   /**
@@ -138,17 +157,20 @@ class WhoisService extends ServiceBase {
   async getDomainWhois(domain) {
     try {
       const options = { follow: 0 };
-      if (domain.endsWith('.in')) {
-        options.server = 'whois.registry.in';
-        // options.follow = 0;
+      const parsed = parseDomain(domain);
+      if (parsed && parsed.tld && this.domainServers[parsed.tld]) {
+        options.server = this.domainServers[parsed.tld];
       }
 
-      const result = await whois(domain, options);
-      return result;
+      const who = await whois(domain, options);
+      if (who && Object.keys(who).length === 0) {
+        return { who: null, error: 'empty result, retry later' };
+      }
+      return { who };
     } catch (error) {
       logError(`error in processing domain: ${domain}, error: ${error.message || error}`);
+      return { who: null, error: error.message || error };
     }
-    return null;
   }
 }
 

@@ -38,3 +38,12 @@ exports.MUTATION_SAVE_DOMAIN_WHOIS = `mutation updateDomain($id: ID!, $data: Dom
     id
   }
 }`;
+
+exports.QUERY_ALL_WHOIS_SERVERS = `
+query allWhoisServers {
+  allWhoisServers {
+    id
+  tld
+  server
+  }
+}`;
