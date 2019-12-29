@@ -1,6 +1,13 @@
-# check domain expirations
+# Domain Manager
 
-// TODO
+### Home View (current)
+
+![Home View](./public/img/home.png)
+
+### Domains view
+
+![Domains View](./public/img/domains.png)
+
 
 ## Running the Project.
 
