@@ -1,10 +1,10 @@
-import Dashboard from './pages/dashboard';
+import Dashboard from './pages/home';
 import About from './pages/about';
 
 export default {
   pages: () => [
     {
-      label: 'A new dashboard',
+      label: 'Home',
       path: '_',
       component: Dashboard,
     },
