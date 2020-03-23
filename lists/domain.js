@@ -37,4 +37,9 @@ exports.Domain = {
     },
   },
   plugins: [atTracking()],
+  adminConfig: {
+    defaultColumns: 'registryExpiryDate,expiresIn,registrationAge,registrar,lastCheckedDate,lastCheckError',
+    defaultPageSize: 100,
+    defaultSort: 'registryExpiryDate'
+  },
 };

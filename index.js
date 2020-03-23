@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+const express = require('express');
+
 const { Keystone } = require('@keystonejs/keystone');
 const { PasswordAuthStrategy } = require('@keystonejs/auth-password');
 const { MongooseAdapter } = require('@keystonejs/adapter-mongoose');
@@ -13,7 +15,7 @@ const sessionStore = new MongoStore({ url: 'mongodb://localhost/domain-check' })
 const extendGraphQL = require('./lib/extendGraphQL');
 
 const { appStaticSrc, appStaticPath } = require('./config');
-const schemas = require('./schemas');
+const lists = require('./lists');
 const initializeData = require('./initialData');
 
 const keystone = new Keystone({
@@ -25,28 +27,32 @@ const keystone = new Keystone({
 
 extendGraphQL(keystone);
 
+for (let list in lists) {
+  keystone.createList(list, lists[list]);
+}
+
 const authStrategy = keystone.createAuthStrategy({
   type: PasswordAuthStrategy,
   list: 'User',
 });
 
-for (let list in schemas) {
-  keystone.createList(list, schemas[list]);
-}
-
 const adminApp = new AdminUIApp({
   adminPath: '/admin',
-  hooks: require.resolve('./app/admin/'),
-  enableDefaultRoute: true,
   authStrategy,
 });
 
 module.exports = {
   keystone,
   apps: [
+    {
+      prepareMiddleware: () => {
+        const app = express();
+        app.get('/', (req, res) => res.redirect('/admin'));
+        return app;
+      }
+    },
     new GraphQLApp(),
     new StaticApp({ path: appStaticPath, src: appStaticSrc }),
     adminApp,
-    // new NextApp({ dir: 'app' }),
   ],
 };

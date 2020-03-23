@@ -7,7 +7,7 @@
     },
     "exclude": [
         "node_modules",
-        "app"
+        "admin-ui"
     ],
     "typeAcquisition": {
         "enable": true
